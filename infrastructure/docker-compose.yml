@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: astranex-postgres
+    environment:
+      POSTGRES_USER: astranex
+      POSTGRES_PASSWORD: astranex_secure_password_2026
+      POSTGRES_DB: astranex_cyber_range
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: astranex-redis
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    container_name: astranex-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://astranex:astranex_secure_password_2026@postgres:5432/astranex_cyber_range
+      SECRET_KEY: astranex-defence-cyber-range-super-secret-key-prod-2026
+    depends_on:
+      - postgres
+      - redis
+
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+    container_name: astranex-web
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

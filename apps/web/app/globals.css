@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 10 13 20;
+  --foreground: 248 250 252;
+}
+
+body {
+  background-color: #0a0d14;
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Defence Grid Overlay */
+.defence-grid {
+  background-image: linear-gradient(to right, rgba(31, 41, 61, 0.2) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(31, 41, 61, 0.2) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Subtle HUD Glows */
+.hud-border-cyan {
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+.hud-border-amber {
+  box-shadow: 0 0 10px rgba(255, 183, 3, 0.15);
+  border-color: rgba(255, 183, 3, 0.3);
+}
+
+.hud-border-green {
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+  border-color: rgba(0, 230, 118, 0.3);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d111a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f293d;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}

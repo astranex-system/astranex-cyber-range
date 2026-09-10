@@ -1,0 +1,47 @@
+[
+  {
+    "frame": 1,
+    "timestamp": "2026-09-10T02:22:00Z",
+    "src": "10.10.2.45",
+    "dst": "10.10.2.1",
+    "protocol": "DNS",
+    "info": "Standard query A c2.ops-external.darknet",
+    "details": "DNS Query for c2.ops-external.darknet"
+  },
+  {
+    "frame": 2,
+    "timestamp": "2026-09-10T02:22:01Z",
+    "src": "10.10.2.1",
+    "dst": "10.10.2.45",
+    "protocol": "DNS",
+    "info": "Standard query response A 192.168.45.188",
+    "details": "Resolved c2.ops-external.darknet -> 192.168.45.188"
+  },
+  {
+    "frame": 3,
+    "timestamp": "2026-09-10T02:22:05Z",
+    "src": "10.10.2.45",
+    "dst": "192.168.45.188",
+    "protocol": "TCP",
+    "info": "48920 -> 8080 [SYN] Seq=1000",
+    "details": "TCP Connection Initiation to Suspicious C2 IP 192.168.45.188"
+  },
+  {
+    "frame": 4,
+    "timestamp": "2026-09-10T02:22:06Z",
+    "src": "10.10.2.45",
+    "dst": "192.168.45.188",
+    "protocol": "HTTP",
+    "info": "GET /telemetry_update.sh HTTP/1.1 (User-Agent: AstraNex-UGV-AX07-Agent/1.0)",
+    "details": "HTTP GET /telemetry_update.sh | Header: X-C2-Session: C2-AX07-99428-EXFIL"
+  },
+  {
+    "frame": 5,
+    "timestamp": "2026-09-10T02:22:07Z",
+    "src": "192.168.45.188",
+    "dst": "10.10.2.45",
+    "protocol": "HTTP",
+    "info": "HTTP/1.1 200 OK (text/x-sh)",
+    "details": "Payload download containing malicious script telemetry_update.sh and token FLAG{C2_EXFILTRATION_CHANNEL_IDENTIFIED_8921}"
+  }
+]
