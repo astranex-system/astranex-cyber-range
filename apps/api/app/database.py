@@ -4,6 +4,10 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 DB_PATH = os.getenv("DATABASE_URL", "sqlite:////Users/milanjyotiray/astranex-cyber-range/astranex.db")
 
+# Fix Heroku/Neon postgres:// scheme to postgresql:// for SQLAlchemy compatibility
+if DB_PATH.startswith("postgres://"):
+    DB_PATH = DB_PATH.replace("postgres://", "postgresql://", 1)
+
 # For SQLite, check_same_thread=False is required for multi-threading in FastAPI
 connect_args = {"check_same_thread": False} if DB_PATH.startswith("sqlite") else {}
 
