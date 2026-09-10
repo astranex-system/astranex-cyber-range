@@ -71,7 +71,7 @@ def seed_database():
                     "max_points": 10,
                     "hint_1": "Look closely at the version notes for telemetry-gateway service.",
                     "hint_2": "Search the internal developer repo snapshot for vehicle telemetry endpoints.",
-                    "hint_3": "The version string is v2.4.1 and endpoint is /api/telemetry/vehicle/AX-07."
+                    "hint_3": "Demo Solution: FLAG{ASTRANEX_TELEMETRY_GATEWAY_V241_DISCOVERED}"
                 }
             },
             {
@@ -88,7 +88,7 @@ def seed_database():
                     "max_points": 15,
                     "hint_1": "Look closely at how the API identifies a vehicle request header.",
                     "hint_2": "Compare the requested vehicle ID with the authenticated user's session token.",
-                    "hint_3": "Check whether header X-AstraNex-Override triggers unauthorized data access."
+                    "hint_3": "Demo Solution: FLAG{TELEMETRY_API_IDOR_UNAUTHORIZED_ACCESS_9942}"
                 }
             },
             {
@@ -105,7 +105,7 @@ def seed_database():
                     "max_points": 15,
                     "hint_1": "Inspect service accounts listed in the authorization mapping.",
                     "hint_2": "Identify which role is required for vehicle.command.",
-                    "hint_3": "The compromised service account identity is svc-telemetry."
+                    "hint_3": "Demo Solution: FLAG{SVC_TELEMETRY_PRIVILEGE_ESCALATION_EXPOSED}"
                 }
             },
             {
@@ -122,7 +122,7 @@ def seed_database():
                     "max_points": 15,
                     "hint_1": "Filter auth.log and gateway.log for anomalous external IP addresses.",
                     "hint_2": "Cross-reference the timestamp 02:14:22Z across all gateway and command logs.",
-                    "hint_3": "Look for requests coming from outside network subnet 10.10.0.0/16."
+                    "hint_3": "Demo Solution: FLAG{LOG_CORRELATION_ATTACKER_IP_192.168.45.188}"
                 }
             },
             {
@@ -139,7 +139,7 @@ def seed_database():
                     "max_points": 15,
                     "hint_1": "Examine DNS queries for non-standard domain names.",
                     "hint_2": "Follow the HTTP stream on port 8080 to destination IP 192.168.45.188.",
-                    "hint_3": "Check HTTP response headers and secret token strings."
+                    "hint_3": "Demo Solution: FLAG{C2_EXFILTRATION_CHANNEL_IDENTIFIED_8921}"
                 }
             },
             {
@@ -156,7 +156,7 @@ def seed_database():
                     "max_points": 10,
                     "hint_1": "Inspect the cron entry frequency in telemetry_update.sh.",
                     "hint_2": "Decode the base64 string d2dldCBodHRwOi8vMTkyLjE2OC40NS4xODg6ODA4MC9heDA3X2MydHJpZ2dlcg==",
-                    "hint_3": "Look for the IOC marker at the bottom of the script."
+                    "hint_3": "Demo Solution: FLAG{MALWARE_PERSISTENCE_CRON_EXPOSED_4812}"
                 }
             },
             {
@@ -173,7 +173,7 @@ def seed_database():
                     "max_points": 10,
                     "hint_1": "Ensure svc-telemetry is explicitly prevented from COMMAND_EXECUTE action.",
                     "hint_2": "Verify that user object is checked for None and assigned_vehicles mapping.",
-                    "hint_3": "Require both 'vehicle.command' role and valid vehicle assignment."
+                    "hint_3": "Demo Solution: Require 'vehicle.command' role for COMMAND_EXECUTE and check assigned_vehicles."
                 }
             },
             {
@@ -190,7 +190,7 @@ def seed_database():
                     "max_points": 10,
                     "hint_1": "Provide detailed findings for initial attack vector and attacker IP.",
                     "hint_2": "Reference specific timestamps from log correlation in Stage 4.",
-                    "hint_3": "Ensure recommended mitigations include code changes made in Stage 7."
+                    "hint_3": "Demo Solution: Ensure initial vector (IDOR), IP (192.168.45.188), and IOCs are fully detailed."
                 }
             }
         ]

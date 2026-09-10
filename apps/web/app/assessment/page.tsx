@@ -189,7 +189,7 @@ export default function AssessmentPage() {
                     <p>Host: api.ops.astranex.local</p>
                     <p className="text-defence-amber">X-AstraNex-Override: TRUE  &lt;-- [!] TAMPERED HEADER DISCOVERED</p>
                     <p className="pt-2 text-defence-heading">HTTP/1.1 200 OK</p>
-                    <p className="text-defence-cyan font-bold">Payload: FLAG&#123;TELEMETRY_API_IDOR_UNAUTHORIZED_ACCESS_9942&#125;</p>
+                    <p className="text-defence-cyan font-bold">Payload: [ENCRYPTED_TELEMETRY_DATA_STREAM]</p>
                   </div>
                 </div>
               </div>
@@ -225,7 +225,7 @@ export default function AssessmentPage() {
                   <p><span className="text-defence-text">Service Identity:</span> svc-telemetry</p>
                   <p><span className="text-defence-text">Granted Scope:</span> [telemetry.read, telemetry.write]</p>
                   <p><span className="text-defence-text">Abused Scope:</span> [vehicle.command] (Unauthorized)</p>
-                  <p><span className="text-defence-text">Evidence Flag:</span> FLAG&#123;SVC_TELEMETRY_PRIVILEGE_ESCALATION_EXPOSED&#125;</p>
+                  <p><span className="text-defence-text">Audit Event:</span> AUDIT-EVT-PRIV-ESCALATION-9942</p>
                 </div>
               </div>
 
