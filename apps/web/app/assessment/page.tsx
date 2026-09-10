@@ -152,7 +152,7 @@ export default function AssessmentPage() {
                   <p><span className="text-defence-text">Service Name:</span> telemetry-gateway</p>
                   <p><span className="text-defence-text">Active Version:</span> v2.4.1</p>
                   <p><span className="text-defence-text">API Route:</span> /api/telemetry/vehicle/&#123;vehicle_id&#125;</p>
-                  <p><span className="text-defence-text">Internal Proof Marker:</span> FLAG&#123;ASTRANEX_TELEMETRY_GATEWAY_V241_DISCOVERED&#125;</p>
+                  <p><span className="text-defence-text">System Digest:</span> SHA256-a9f4821c9014b2e88a0</p>
                 </div>
               </div>
 
