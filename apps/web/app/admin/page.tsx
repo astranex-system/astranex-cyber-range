@@ -43,6 +43,20 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleResetAllData = async () => {
+    if (!confirm('Are you sure you want to reset ALL candidate test data? This will clear all attempts, scores, and candidate accounts.')) {
+      return;
+    }
+
+    try {
+      await fetchApi('/admin/reset', { method: 'POST' });
+      await loadAdminData();
+      alert('All candidate test data reset successfully.');
+    } catch (err: any) {
+      alert(err.message || 'Failed to reset test data.');
+    }
+  };
+
   const handleBack = () => {
     if (typeof window !== 'undefined') {
       window.history.back();
@@ -105,6 +119,15 @@ export default function AdminDashboardPage() {
             <Download className="w-3.5 h-3.5 fill-current" />
             <span>EXPORT CSV</span>
           </a>
+
+          <button
+            onClick={handleResetAllData}
+            className="bg-defence-card border border-defence-border hover:border-rose-500 text-rose-400 px-3.5 py-1.5 rounded-lg font-mono text-xs flex items-center space-x-1.5 transition"
+            title="Reset All Candidate Test Data"
+          >
+            <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+            <span>RESET DATA</span>
+          </button>
         </div>
       </header>
 

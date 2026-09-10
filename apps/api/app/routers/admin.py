@@ -19,9 +19,12 @@ router = APIRouter(prefix="/api/admin", tags=["Admin Management & Analytics"])
 @router.get("/dashboard", response_model=AdminDashboardOut)
 def get_admin_dashboard(admin: User = Depends(get_current_admin), db: Session = Depends(get_db)):
     candidates = db.query(User).filter(User.role == "candidate").all()
+    candidate_ids = {c.id for c in candidates}
     total_cand = len(candidates)
 
-    attempts = db.query(Attempt).all()
+    all_attempts = db.query(Attempt).all()
+    attempts = [a for a in all_attempts if a.candidate_id in candidate_ids]
+    
     active_cand = sum(1 for a in attempts if a.status == "IN_PROGRESS")
     completed_cand = sum(1 for a in attempts if a.status == "SUBMITTED")
 
@@ -34,7 +37,8 @@ def get_admin_dashboard(admin: User = Depends(get_current_admin), db: Session = 
         times = [(a.completed_at - a.started_at).total_seconds() / 60.0 for a in completed_attempts]
         avg_time = round(sum(times) / len(times), 1)
 
-    all_hints = db.query(HintUsage).all()
+    candidate_attempts_ids = {a.id for a in attempts}
+    all_hints = [h for h in db.query(HintUsage).all() if h.attempt_id in candidate_attempts_ids]
     avg_hints = round(len(all_hints) / total_cand, 1) if total_cand > 0 else 0.0
 
     return AdminDashboardOut(
@@ -45,6 +49,39 @@ def get_admin_dashboard(admin: User = Depends(get_current_admin), db: Session = 
         average_completion_time_minutes=avg_time,
         average_hints_used=avg_hints
     )
+
+@router.post("/reset")
+def reset_all_candidate_data(admin: User = Depends(get_current_admin), db: Session = Depends(get_db)):
+    """
+    Clears all candidate accounts, attempts, submissions, logs, and reports.
+    Preserves admin accounts and base assessment definitions.
+    """
+    candidates = db.query(User).filter(User.role == "candidate").all()
+    for c in candidates:
+        attempts = db.query(Attempt).filter(Attempt.candidate_id == c.id).all()
+        for att in attempts:
+            db.query(Submission).filter(Submission.attempt_id == att.id).delete()
+            db.query(HintUsage).filter(HintUsage.attempt_id == att.id).delete()
+            db.query(EventLog).filter(EventLog.attempt_id == att.id).delete()
+            db.query(CodeSubmission).filter(CodeSubmission.attempt_id == att.id).delete()
+            if att.report:
+                db.delete(att.report)
+            db.delete(att)
+        db.delete(c)
+
+    # Also clean up any orphaned admin test attempts
+    admin_attempts = db.query(Attempt).filter(Attempt.candidate_id == admin.id).all()
+    for att in admin_attempts:
+        db.query(Submission).filter(Submission.attempt_id == att.id).delete()
+        db.query(HintUsage).filter(HintUsage.attempt_id == att.id).delete()
+        db.query(EventLog).filter(EventLog.attempt_id == att.id).delete()
+        db.query(CodeSubmission).filter(CodeSubmission.attempt_id == att.id).delete()
+        if att.report:
+            db.delete(att.report)
+        db.delete(att)
+
+    db.commit()
+    return {"status": "SUCCESS", "detail": "All candidate test data reset successfully."}
 
 @router.get("/candidates", response_model=List[CandidateSummaryOut])
 def list_candidates(admin: User = Depends(get_current_admin), db: Session = Depends(get_db)):
