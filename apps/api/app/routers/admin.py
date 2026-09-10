@@ -78,6 +78,26 @@ def list_candidates(admin: User = Depends(get_current_admin), db: Session = Depe
 
     return result
 
+@router.delete("/candidates/{candidate_id}")
+def delete_candidate(candidate_id: int, admin: User = Depends(get_current_admin), db: Session = Depends(get_db)):
+    cand = db.query(User).filter(User.id == candidate_id, User.role == "candidate").first()
+    if not cand:
+        raise HTTPException(status_code=404, detail="Candidate not found.")
+
+    attempts = db.query(Attempt).filter(Attempt.candidate_id == cand.id).all()
+    for att in attempts:
+        db.query(Submission).filter(Submission.attempt_id == att.id).delete()
+        db.query(HintUsage).filter(HintUsage.attempt_id == att.id).delete()
+        db.query(EventLog).filter(EventLog.attempt_id == att.id).delete()
+        db.query(CodeSubmission).filter(CodeSubmission.attempt_id == att.id).delete()
+        if att.report:
+            db.delete(att.report)
+        db.delete(att)
+
+    db.delete(cand)
+    db.commit()
+    return {"status": "SUCCESS", "detail": f"Candidate {candidate_id} deleted successfully."}
+
 @router.get("/candidates/{candidate_id}", response_model=CandidateDetailOut)
 def get_candidate_detail(candidate_id: int, admin: User = Depends(get_current_admin), db: Session = Depends(get_db)):
     cand = db.query(User).filter(User.id == candidate_id, User.role == "candidate").first()

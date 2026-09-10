@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Users, Award, Clock, HelpCircle, Download, Trophy, Eye } from 'lucide-react';
+import { ArrowLeft, Users, Award, Clock, HelpCircle, Download, Trophy, Eye, Trash2 } from 'lucide-react';
 import { fetchApi } from '../../lib/api';
 
 export default function AdminDashboardPage() {
@@ -15,16 +15,31 @@ export default function AdminDashboardPage() {
 
   const loadAdminData = async () => {
     try {
-      const dashData = await fetchApi('/admin/dashboard');
+      const [dashData, candData] = await Promise.all([
+        fetchApi('/admin/dashboard'),
+        fetchApi('/admin/candidates')
+      ]);
       setStats(dashData);
-
-      const candData = await fetchApi('/admin/candidates');
       setCandidates(candData);
     } catch (err: any) {
       console.error(err);
       if (typeof window !== 'undefined') window.location.href = '/login';
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteCandidate = async (candidateId: number, fullName: string) => {
+    if (!confirm(`Are you sure you want to delete candidate "${fullName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await fetchApi(`/admin/candidates/${candidateId}`, { method: 'DELETE' });
+      setCandidates((prev) => prev.filter((c) => c.candidate_id !== candidateId));
+      setStats((prev: any) => prev ? { ...prev, total_candidates: Math.max(0, prev.total_candidates - 1) } : prev);
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete candidate');
     }
   };
 
@@ -180,7 +195,7 @@ export default function AdminDashboardPage() {
                       <td className="px-4 py-3 text-defence-cyan font-bold">{c.stages_completed} / 8 STAGES</td>
                       <td className="px-4 py-3 text-defence-text">{c.duration_minutes ? `${c.duration_minutes}m` : '--'}</td>
                       <td className="px-4 py-3 text-defence-text">{c.hints_used}</td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-right flex items-center justify-end space-x-2">
                         <a
                           href={`/admin/candidates/${c.candidate_id}`}
                           className="bg-defence-sidebar border border-defence-border hover:border-defence-cyan text-defence-cyan px-3 py-1 rounded text-[11px] inline-flex items-center space-x-1 transition"
@@ -188,6 +203,14 @@ export default function AdminDashboardPage() {
                           <Eye className="w-3.5 h-3.5" />
                           <span>REVIEW</span>
                         </a>
+                        <button
+                          onClick={() => handleDeleteCandidate(c.candidate_id, c.full_name)}
+                          className="bg-defence-sidebar border border-defence-border hover:border-rose-500 text-rose-400 px-2.5 py-1 rounded text-[11px] inline-flex items-center space-x-1 transition"
+                          title="Delete Candidate"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                          <span>DELETE</span>
+                        </button>
                       </td>
                     </tr>
                   );

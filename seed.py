@@ -26,16 +26,7 @@ def seed_database():
             )
             db.add(admin_user)
 
-        candidate_user = db.query(User).filter(User.email == "candidate@astranex.defence").first()
-        if not candidate_user:
-            candidate_user = User(
-                email="candidate@astranex.defence",
-                full_name="John Doe",
-                hashed_password=get_password_hash("candidate123"),
-                role="candidate"
-            )
-            db.add(candidate_user)
-
+        # candidate_user creation removed so real candidates register independently
         db.commit()
 
         # 2. Create Operation Blackout Assessment

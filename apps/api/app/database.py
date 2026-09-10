@@ -11,7 +11,16 @@ if DB_PATH.startswith("postgres://"):
 # For SQLite, check_same_thread=False is required for multi-threading in FastAPI
 connect_args = {"check_same_thread": False} if DB_PATH.startswith("sqlite") else {}
 
-engine = create_engine(DB_PATH, connect_args=connect_args, echo=False)
+# Connection pool settings for fast response times and pre-ping to prevent stale connections
+engine_kwargs = {"connect_args": connect_args, "echo": False, "pool_pre_ping": True}
+if not DB_PATH.startswith("sqlite"):
+    engine_kwargs.update({
+        "pool_size": 10,
+        "max_overflow": 20,
+        "pool_recycle": 300
+    })
+
+engine = create_engine(DB_PATH, **engine_kwargs)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

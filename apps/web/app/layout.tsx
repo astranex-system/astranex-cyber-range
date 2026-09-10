@@ -13,6 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="preconnect" href="https://astranex-cyber-range.onrender.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://astranex-cyber-range.onrender.com" />
+      </head>
       <body className="bg-defence-bg text-defence-heading min-h-screen antialiased selection:bg-defence-cyan selection:text-black">
         {children}
       </body>
