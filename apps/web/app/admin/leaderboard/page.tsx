@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Trophy, ArrowLeft, Award, Clock, HelpCircle, Shield } from 'lucide-react';
+import { Trophy, ArrowLeft } from 'lucide-react';
 import { fetchApi } from '../../../lib/api';
 
 export default function LeaderboardPage() {
@@ -23,6 +23,12 @@ export default function LeaderboardPage() {
     }
   };
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen defence-grid flex items-center justify-center font-mono text-sm text-defence-cyan">
@@ -34,13 +40,22 @@ export default function LeaderboardPage() {
   return (
     <div className="min-h-screen bg-defence-bg text-defence-heading p-6 space-y-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between pb-4 border-b border-defence-border">
-        <div className="flex items-center space-x-3">
-          <a
-            href="/admin"
-            className="p-2 rounded-lg bg-defence-sidebar border border-defence-border text-defence-text hover:text-defence-heading transition"
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={handleBack}
+            className="p-2 rounded-lg bg-defence-sidebar border border-defence-border text-defence-text hover:text-defence-cyan transition flex items-center space-x-1.5 font-mono text-xs"
+            title="Navigate Back"
           >
             <ArrowLeft className="w-4 h-4" />
-          </a>
+            <span>BACK</span>
+          </button>
+
+          <img
+            src="/logo.jpg"
+            alt="AstraNex Defence Logo"
+            className="w-9 h-9 object-contain rounded"
+          />
+
           <div>
             <h1 className="font-mono text-xl font-bold text-defence-heading flex items-center space-x-2">
               <Trophy className="w-5 h-5 text-defence-amber" />

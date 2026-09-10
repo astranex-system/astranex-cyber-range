@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Play, Terminal, Clock, Award, CheckCircle2, UserCheck, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Play, Clock, Award, AlertTriangle } from 'lucide-react';
 import { fetchApi } from '../lib/api';
 
 export default function LandingPage() {
   const [assessment, setAssessment] = useState<any>(null);
   const [attempt, setAttempt] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
@@ -22,8 +21,6 @@ export default function LandingPage() {
       setAttempt(attData);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -36,19 +33,40 @@ export default function LandingPage() {
     }
   };
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
+
   return (
     <main className="min-h-screen defence-grid p-6 flex flex-col justify-between max-w-5xl mx-auto space-y-8">
       {/* Header */}
       <header className="flex items-center justify-between pt-4 pb-6 border-b border-defence-border">
-        <div className="flex items-center space-x-3">
-          <Shield className="w-8 h-8 text-defence-cyan animate-pulse" />
-          <div>
-            <h1 className="font-mono text-xl font-bold tracking-widest text-defence-heading">
-              ASTRANEX CYBER RANGE
-            </h1>
-            <p className="font-mono text-xs text-defence-cyan tracking-wider">
-              &quot;Investigate. Exploit. Defend.&quot;
-            </p>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={handleBack}
+            className="bg-defence-card border border-defence-border hover:border-defence-cyan text-defence-text hover:text-defence-cyan px-3 py-2 rounded-lg font-mono text-xs flex items-center space-x-1.5 transition"
+            title="Navigate Back"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>BACK</span>
+          </button>
+
+          <div className="flex items-center space-x-3">
+            <img
+              src="/logo.jpg"
+              alt="AstraNex Defence Logo"
+              className="w-10 h-10 object-contain rounded"
+            />
+            <div>
+              <h1 className="font-mono text-xl font-bold tracking-widest text-defence-heading">
+                ASTRANEX CYBER RANGE
+              </h1>
+              <p className="font-mono text-xs text-defence-cyan tracking-wider">
+                &quot;Investigate. Exploit. Defend.&quot;
+              </p>
+            </div>
           </div>
         </div>
 

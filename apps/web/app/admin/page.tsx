@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Users, Award, Clock, HelpCircle, Download, Trophy, Eye, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Users, Award, Clock, HelpCircle, Download, Trophy, Eye } from 'lucide-react';
 import { fetchApi } from '../../lib/api';
 
 export default function AdminDashboardPage() {
@@ -28,6 +28,12 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen defence-grid flex items-center justify-center font-mono text-sm text-defence-cyan">
@@ -40,15 +46,30 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-defence-bg text-defence-heading flex flex-col">
       {/* Admin Top Header */}
       <header className="bg-defence-sidebar border-b border-defence-border px-6 py-4 flex items-center justify-between shadow-lg">
-        <div className="flex items-center space-x-3">
-          <Shield className="w-6 h-6 text-defence-amber animate-pulse" />
-          <div>
-            <h1 className="font-mono text-base font-bold text-defence-heading">
-              ASTRANEX DEFENCE // EVALUATION COMMAND CENTER
-            </h1>
-            <p className="text-[10px] font-mono text-defence-amber uppercase tracking-widest">
-              ADMINISTRATION PORTAL // OP BLACKOUT
-            </p>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={handleBack}
+            className="bg-defence-card border border-defence-border hover:border-defence-cyan text-defence-text hover:text-defence-cyan px-3 py-1.5 rounded-lg font-mono text-xs flex items-center space-x-1.5 transition"
+            title="Navigate Back"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>BACK</span>
+          </button>
+
+          <div className="flex items-center space-x-3">
+            <img
+              src="/logo.jpg"
+              alt="AstraNex Defence Logo"
+              className="w-8 h-8 object-contain rounded"
+            />
+            <div>
+              <h1 className="font-mono text-base font-bold text-defence-heading">
+                ASTRANEX DEFENCE // EVALUATION COMMAND CENTER
+              </h1>
+              <p className="text-[10px] font-mono text-defence-amber uppercase tracking-widest">
+                ADMINISTRATION PORTAL // OP BLACKOUT
+              </p>
+            </div>
           </div>
         </div>
 

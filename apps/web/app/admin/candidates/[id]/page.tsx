@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Shield, ArrowLeft, Award, Clock, FileText, CheckCircle2, Save, Terminal, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Award, FileText, CheckCircle2, Save, Terminal } from 'lucide-react';
 import { fetchApi } from '../../../../lib/api';
 
 export default function CandidateDetailPage({ params }: { params: { id: string } }) {
@@ -34,7 +34,7 @@ export default function CandidateDetailPage({ params }: { params: { id: string }
     setSavingScore(true);
 
     try {
-      const res = await fetchApi(`/admin/reports/${detail.attempt_id}/score`, {
+      await fetchApi(`/admin/reports/${detail.attempt_id}/score`, {
         method: 'POST',
         body: JSON.stringify({ score: Number(reportScore), admin_notes: adminNotes }),
       });
@@ -46,6 +46,12 @@ export default function CandidateDetailPage({ params }: { params: { id: string }
       alert(err.message || 'Error saving report review.');
     } finally {
       setSavingScore(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
     }
   };
 
@@ -69,13 +75,22 @@ export default function CandidateDetailPage({ params }: { params: { id: string }
     <div className="min-h-screen bg-defence-bg text-defence-heading p-6 space-y-6 max-w-6xl mx-auto">
       {/* Header Bar */}
       <div className="flex items-center justify-between pb-4 border-b border-defence-border">
-        <div className="flex items-center space-x-3">
-          <a
-            href="/admin"
-            className="p-2 rounded-lg bg-defence-sidebar border border-defence-border text-defence-text hover:text-defence-heading transition"
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={handleBack}
+            className="p-2 rounded-lg bg-defence-sidebar border border-defence-border text-defence-text hover:text-defence-cyan transition flex items-center space-x-1.5 font-mono text-xs"
+            title="Navigate Back"
           >
             <ArrowLeft className="w-4 h-4" />
-          </a>
+            <span>BACK</span>
+          </button>
+
+          <img
+            src="/logo.jpg"
+            alt="AstraNex Defence Logo"
+            className="w-9 h-9 object-contain rounded"
+          />
+
           <div>
             <h1 className="font-mono text-xl font-bold text-defence-heading">
               CANDIDATE EVALUATION: {detail.full_name}

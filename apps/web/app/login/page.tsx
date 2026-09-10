@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Shield, Lock, Mail, ArrowRight, UserCheck, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Lock, Mail, UserCheck, ShieldAlert, ArrowRight } from 'lucide-react';
 import { fetchApi, setAuthToken } from '../../lib/api';
 
 export default function LoginPage() {
@@ -39,12 +39,32 @@ export default function LoginPage() {
     }
   };
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
+
   return (
-    <div className="min-h-screen defence-grid flex items-center justify-center p-4">
+    <div className="min-h-screen defence-grid flex items-center justify-center p-4 relative">
+      {/* Top Navigation Back Button */}
+      <button
+        onClick={handleBack}
+        className="absolute top-6 left-6 bg-defence-card border border-defence-border hover:border-defence-cyan text-defence-text hover:text-defence-cyan px-4 py-2 rounded-lg font-mono text-xs flex items-center space-x-2 transition shadow-lg"
+        title="Navigate Back"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <span>BACK</span>
+      </button>
+
       <div className="w-full max-w-md bg-defence-card border border-defence-border rounded-2xl p-8 shadow-2xl space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex p-3 rounded-xl bg-defence-cyan/10 border border-defence-cyan/30 text-defence-cyan mb-2">
-            <Shield className="w-8 h-8 animate-pulse" />
+          <div className="inline-flex p-3 rounded-2xl bg-defence-sidebar border border-defence-border mb-2">
+            <img
+              src="/logo.jpg"
+              alt="AstraNex Defence Logo"
+              className="w-16 h-16 object-contain rounded-xl"
+            />
           </div>
           <h1 className="font-mono text-2xl font-bold tracking-wider text-defence-heading">
             ASTRANEX CYBER RANGE

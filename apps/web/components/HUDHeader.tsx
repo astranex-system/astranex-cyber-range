@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Shield, Radio, Clock, UserCheck, LogOut, Award } from 'lucide-react';
+import { ArrowLeft, Radio, Clock, UserCheck, LogOut, Award } from 'lucide-react';
 import { removeAuthToken } from '../lib/api';
 
 interface HUDHeaderProps {
@@ -30,48 +30,69 @@ export const HUDHeader: React.FC<HUDHeaderProps> = ({
     window.location.href = '/login';
   };
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
+
   return (
     <header className="bg-defence-sidebar border-b border-defence-border px-6 py-3 flex items-center justify-between shadow-lg">
       <div className="flex items-center space-x-4">
-        <div className="bg-defence-card p-2 rounded border border-defence-border flex items-center space-x-2">
-          <Shield className="w-6 h-6 text-defence-cyan animate-pulse" />
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="bg-defence-card border border-defence-border hover:border-defence-cyan text-defence-text hover:text-defence-cyan px-2.5 py-1.5 rounded-lg font-mono text-xs flex items-center space-x-1.5 transition"
+          title="Navigate Back"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span className="hidden sm:inline">BACK</span>
+        </button>
+
+        {/* Logo & Title */}
+        <div className="bg-defence-card px-3 py-1.5 rounded border border-defence-border flex items-center space-x-3">
+          <img
+            src="/logo.jpg"
+            alt="AstraNex Defence Logo"
+            className="w-7 h-7 object-contain rounded"
+          />
           <div>
-            <h1 className="font-mono font-bold text-sm tracking-wider text-defence-heading">
+            <h1 className="font-mono font-bold text-xs tracking-wider text-defence-heading">
               ASTRANEX DEFENCE
             </h1>
-            <p className="text-[10px] font-mono text-defence-cyan uppercase tracking-widest">
+            <p className="text-[9px] font-mono text-defence-cyan uppercase tracking-widest">
               CYBER RANGE // OP BLACKOUT
             </p>
           </div>
         </div>
 
-        <div className="hidden md:flex items-center space-x-3 px-3 py-1.5 bg-defence-card/60 rounded border border-defence-border/80">
+        <div className="hidden lg:flex items-center space-x-3 px-3 py-1.5 bg-defence-card/60 rounded border border-defence-border/80">
           <Radio className="w-4 h-4 text-defence-amber animate-spin" style={{ animationDuration: '4s' }} />
           <div className="text-xs font-mono">
-            <span className="text-defence-text">TARGET ASSET: </span>
+            <span className="text-defence-text">ASSET: </span>
             <span className="text-defence-heading font-semibold">UGV AX-07</span>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 bg-defence-card/90 px-3 py-1.5 rounded border border-defence-border">
           <Clock className="w-4 h-4 text-defence-cyan" />
-          <span className="text-xs font-mono text-defence-text">ELAPSED:</span>
-          <span className="font-mono text-sm font-bold text-defence-cyan">
+          <span className="text-xs font-mono text-defence-text hidden sm:inline">ELAPSED:</span>
+          <span className="font-mono text-xs font-bold text-defence-cyan">
             {formatTime(remainingSeconds)}
           </span>
         </div>
 
         <div className="flex items-center space-x-2 bg-defence-card/90 px-3 py-1.5 rounded border border-defence-border">
           <Award className="w-4 h-4 text-defence-amber" />
-          <span className="text-xs font-mono text-defence-text">SCORE:</span>
-          <span className="font-mono text-sm font-bold text-defence-amber">
+          <span className="text-xs font-mono text-defence-text hidden sm:inline">SCORE:</span>
+          <span className="font-mono text-xs font-bold text-defence-amber">
             {totalScore} / 100 PTS
           </span>
         </div>
 
-        <div className="hidden sm:flex items-center space-x-2 text-xs font-mono text-defence-heading">
+        <div className="hidden md:flex items-center space-x-2 text-xs font-mono text-defence-heading">
           <UserCheck className="w-4 h-4 text-defence-green" />
           <span>{candidateName}</span>
         </div>
