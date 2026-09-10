@@ -15,7 +15,7 @@ app = FastAPI(
 )
 
 SECURITY_TXT_CONTENT = """# RFC 9116 Official Security Disclosure Standard
-Contact: mailto:security@astranex.defence
+Contact: mailto:astranexdefence@gmail.com
 Contact: https://astranex-cyber-range.netlify.app/security
 Expires: 2027-12-31T23:59:59.000Z
 Encryption: https://astranex-cyber-range.netlify.app/pgp-key.txt
