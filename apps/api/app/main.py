@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
@@ -12,9 +13,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
+ALLOWED_ORIGINS = os.getenv(
+    "CORS_ORIGINS",
+    "https://astranex-cyber-range.netlify.app,https://astranex-cyber-range.vercel.app,http://localhost:3000"
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[origin.strip() for origin in ALLOWED_ORIGINS if origin.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

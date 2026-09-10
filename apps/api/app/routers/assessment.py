@@ -23,7 +23,8 @@ from app.services.sandbox import run_code_in_sandbox
 
 router = APIRouter(prefix="/api", tags=["Assessment Candidate Engine"])
 
-CHALLENGES_DIR = "/Users/milanjyotiray/astranex-cyber-range/challenges/operation-blackout"
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+CHALLENGES_DIR = os.getenv("CHALLENGES_DIR", os.path.join(BASE_DIR, "challenges", "operation-blackout"))
 
 @router.get("/assessment", response_model=AssessmentOut)
 def get_assessment(db: Session = Depends(get_db)):

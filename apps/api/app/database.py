@@ -2,7 +2,7 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DB_PATH = os.getenv("DATABASE_URL", "sqlite:////Users/milanjyotiray/astranex-cyber-range/astranex.db")
+DB_PATH = os.getenv("DATABASE_URL", "sqlite:///./astranex.db")
 
 # Fix Heroku/Neon postgres:// scheme to postgresql:// for SQLAlchemy compatibility
 if DB_PATH.startswith("postgres://"):
