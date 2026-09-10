@@ -23,8 +23,25 @@ from app.services.sandbox import run_code_in_sandbox
 
 router = APIRouter(prefix="/api", tags=["Assessment Candidate Engine"])
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-CHALLENGES_DIR = os.getenv("CHALLENGES_DIR", os.path.join(BASE_DIR, "challenges", "operation-blackout"))
+def get_challenges_dir():
+    env_dir = os.getenv("CHALLENGES_DIR")
+    if env_dir and os.path.exists(env_dir):
+        return env_dir
+
+    cur_file = os.path.abspath(__file__)
+    candidates = [
+        os.path.abspath(os.path.join(os.path.dirname(cur_file), "../../challenges/operation-blackout")),
+        os.path.abspath(os.path.join(os.path.dirname(cur_file), "../../../challenges/operation-blackout")),
+        os.path.abspath(os.path.join(os.path.dirname(cur_file), "../../../../challenges/operation-blackout")),
+        os.path.abspath(os.path.join(os.getcwd(), "challenges/operation-blackout")),
+        os.path.abspath(os.path.join(os.getcwd(), "apps/api/challenges/operation-blackout")),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return candidates[0]
+
+CHALLENGES_DIR = get_challenges_dir()
 
 @router.get("/assessment", response_model=AssessmentOut)
 def get_assessment(db: Session = Depends(get_db)):

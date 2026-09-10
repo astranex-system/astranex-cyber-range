@@ -27,8 +27,10 @@ def get_test_candidate_token():
     res = client.post("/api/auth/login", json={"email": email, "password": "candidate123"})
     return res.json().get("access_token")
 
+import uuid
+
 def test_login_candidate_success():
-    email = "test_candidate_login@astranex.defence"
+    email = f"test_cand_{uuid.uuid4().hex[:6]}@astranex.defence"
     reg_res = client.post("/api/auth/register", json={"email": email, "password": "candidate123", "full_name": "Login Candidate"})
     assert reg_res.status_code == 200
     assert "access_token" in reg_res.json()
