@@ -1,0 +1,7 @@
+2026-09-10T02:00:15Z host=gateway-node-01 sshd[1042]: Accepted publickey for sysadmin from 10.10.2.10 port 49152 ssh2
+2026-09-10T02:05:30Z host=gateway-node-01 auth-service[1105]: INFO Successful login for candidate-eval@astranex.local from 10.10.2.45
+2026-09-10T02:14:22Z host=gateway-node-01 auth-service[1105]: WARN Service token issued for svc-telemetry (API key id: key-8923-ax) from IP 192.168.45.188
+2026-09-10T02:14:23Z host=gateway-node-01 auth-service[1105]: INFO Token scopes granted: [telemetry.read, telemetry.write]
+2026-09-10T02:18:05Z host=gateway-node-01 auth-service[1105]: WARN Token privilege escalation attempt: svc-telemetry requested scope [vehicle.command] from IP 192.168.45.188 - Bypass logic triggered via IDOR header X-AstraNex-Override: TRUE
+2026-09-10T02:22:40Z host=gateway-node-01 auth-service[1105]: ERROR Session hijack detected on svc-telemetry token: simultaneous request from 10.10.2.45 and 192.168.45.188
+2026-09-10T02:30:00Z host=gateway-node-01 auth-service[1105]: INFO Security alert generated: ASTRA-INC-AX07-0926

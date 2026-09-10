@@ -1,0 +1,6 @@
+2026-09-10T02:10:00Z [INFO] API Gateway v2.4.1 initialized listening on 0.0.0.0:8443
+2026-09-10T02:14:22Z [INFO] GET /api/telemetry/vehicle/AX-07 200 OK client=192.168.45.188 user=svc-telemetry bytes=1420
+2026-09-10T02:15:10Z [INFO] GET /api/telemetry/vehicle/AX-07/config 200 OK client=192.168.45.188 user=svc-telemetry bytes=2048
+2026-09-10T02:18:05Z [WARN] POST /api/commands/AX-07 200 OK client=192.168.45.188 user=svc-telemetry payload="{\"action\":\"ENABLE_REMOTE_OVERRIDE\"}"
+2026-09-10T02:19:12Z [WARN] POST /api/commands/AX-07 200 OK client=192.168.45.188 user=svc-telemetry payload="{\"action\":\"OVERRIDE_NAVIGATION_LIMITS\",\"lat\":34.0522,\"lon\":-118.2437}"
+2026-09-10T02:20:44Z [ERROR] GET /api/status/AX-07 500 Internal Server Error client=10.10.2.45 payload_mismatch

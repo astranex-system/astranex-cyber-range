@@ -1,0 +1,5 @@
+2026-09-10T02:00:00Z systemd[1]: Started AstraNex UGV Core Controller AX-07.
+2026-09-10T02:18:05Z kernel: [ 4512.912] astranex_nav: Remote control override flag raised by process pid=4812 (telemetry-gateway)
+2026-09-10T02:22:16Z systemd[1]: Created process pid=5920 /tmp/.telemetry_update.sh
+2026-09-10T02:22:17Z crond[890]: (root) RELOAD (crontabs/root) - added persistence entry '*/15 * * * * root /tmp/.telemetry_update.sh'
+2026-09-10T02:25:00Z systemd[1]: Warning: UGV AX-07 geofence perimeter breached! Target destination: 34.0522, -118.2437

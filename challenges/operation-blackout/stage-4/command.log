@@ -1,0 +1,5 @@
+2026-09-10T02:00:10Z [CMD] EXEC ID=cmd-001 issuer=sysadmin payload="SELF_TEST" status=SUCCESS
+2026-09-10T02:18:05Z [CMD] EXEC ID=cmd-901 issuer=svc-telemetry payload="ENABLE_REMOTE_OVERRIDE" status=SUCCESS bypass_flag=TRUE
+2026-09-10T02:19:12Z [CMD] EXEC ID=cmd-902 issuer=svc-telemetry payload="OVERRIDE_NAVIGATION_LIMITS --lat 34.0522 --lon -118.2437" status=SUCCESS
+2026-09-10T02:20:01Z [CMD] EXEC ID=cmd-903 issuer=svc-telemetry payload="DISABLE_LOCAL_FAILSAFE" status=SUCCESS
+2026-09-10T02:22:15Z [CMD] EXEC ID=cmd-904 issuer=svc-telemetry payload="FETCH_UPDATE_PAYLOAD http://192.168.45.188:8080/telemetry_update.sh" status=SUCCESS

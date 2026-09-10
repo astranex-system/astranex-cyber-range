@@ -18,6 +18,8 @@ __pycache__/
 *.db
 *.sqlite3
 *.log
+!challenges/**/*.log
+!apps/api/challenges/**/*.log
 
 # Environment variables & system files
 .env
