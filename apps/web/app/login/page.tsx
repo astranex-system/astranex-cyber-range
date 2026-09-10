@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Shield, Lock, Mail, ArrowRight, UserCheck, ShieldAlert, UserPlus } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, UserCheck, ShieldAlert } from 'lucide-react';
 import { fetchApi, setAuthToken } from '../../lib/api';
 
 export default function LoginPage() {
   const [isRegister, setIsRegister] = useState(false);
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('candidate@astranex.defence');
-  const [password, setPassword] = useState('candidate123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,18 +37,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillCandidateSeed = () => {
-    setIsRegister(false);
-    setEmail('candidate@astranex.defence');
-    setPassword('candidate123');
-  };
-
-  const fillAdminSeed = () => {
-    setIsRegister(false);
-    setEmail('admin@astranex.defence');
-    setPassword('admin123');
   };
 
   return (
@@ -119,7 +107,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-defence-sidebar border border-defence-border rounded-lg pl-10 pr-4 py-2.5 font-mono text-xs text-defence-heading focus:outline-none focus:border-defence-cyan"
-                placeholder="candidate@astranex.defence"
+                placeholder="identity@astranex.defence"
               />
             </div>
           </div>
@@ -157,27 +145,6 @@ export default function LoginPage() {
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
-
-        {/* Demo Seed Shortcuts */}
-        <div className="pt-4 border-t border-defence-border space-y-2">
-          <p className="text-[11px] font-mono text-defence-text text-center font-semibold">
-            DEVELOPMENT DEMO ACCOUNTS:
-          </p>
-          <div className="grid grid-cols-2 gap-2 font-mono text-xs">
-            <button
-              onClick={fillCandidateSeed}
-              className="bg-defence-sidebar hover:bg-defence-card border border-defence-border text-defence-heading p-2 rounded text-[11px] text-center transition"
-            >
-              Candidate Login
-            </button>
-            <button
-              onClick={fillAdminSeed}
-              className="bg-defence-sidebar hover:bg-defence-card border border-defence-border text-defence-amber p-2 rounded text-[11px] text-center transition"
-            >
-              Admin Login
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
