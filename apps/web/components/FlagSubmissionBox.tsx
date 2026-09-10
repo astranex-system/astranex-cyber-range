@@ -100,7 +100,7 @@ export const FlagSubmissionBox: React.FC<FlagSubmissionBoxProps> = ({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex space-x-3">
+        <div className="flex flex-col sm:flex-row space-y-2.5 sm:space-y-0 sm:space-x-3">
           <input
             type="text"
             value={flag}
@@ -111,7 +111,7 @@ export const FlagSubmissionBox: React.FC<FlagSubmissionBoxProps> = ({
           <button
             type="submit"
             disabled={submitting || !flag.trim()}
-            className="bg-defence-cyan hover:bg-defence-cyan/80 text-black font-mono font-bold px-6 py-2.5 rounded-lg text-sm transition flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-defence-cyan hover:bg-defence-cyan/80 text-black font-mono font-bold px-6 py-2.5 rounded-lg text-sm transition flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             <Send className="w-4 h-4" />
             <span>{submitting ? 'VERIFYING...' : 'SUBMIT FLAG'}</span>

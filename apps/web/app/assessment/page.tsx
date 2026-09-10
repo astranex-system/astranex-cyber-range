@@ -74,7 +74,7 @@ export default function AssessmentPage() {
         attemptStatus={attempt?.status}
       />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Stage Sidebar */}
         <StageSidebar
           stages={stages}
@@ -83,7 +83,7 @@ export default function AssessmentPage() {
         />
 
         {/* Main Stage Content View */}
-        <main className="flex-1 p-6 overflow-y-auto space-y-6">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto space-y-6 max-w-full">
           {/* Stage 0: Mission Briefing */}
           {activeStageOrder === 0 && (
             <div className="bg-defence-card border border-defence-border rounded-xl p-8 shadow-xl space-y-6 max-w-4xl">
@@ -132,20 +132,20 @@ export default function AssessmentPage() {
                   Review the required submission formats before acknowledging your briefing and starting the 90-minute assessment timer:
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-                  <div className="bg-defence-bg border border-defence-border p-3.5 rounded-lg space-y-1.5">
-                    <span className="text-[10px] text-defence-cyan font-bold block uppercase tracking-wider">1. Flag Submissions (Stages 1-6)</span>
+                  <div className="bg-defence-bg border border-defence-border p-3.5 rounded-lg space-y-1.5 min-w-0">
+                    <span className="text-[10px] text-defence-cyan font-bold block uppercase tracking-wider">1. Flag Submissions (1-6)</span>
                     <p className="text-[11px] text-defence-text">Submit proof strings in format:</p>
-                    <code className="text-[11px] text-defence-cyan block font-bold bg-defence-sidebar px-2 py-1 rounded border border-defence-cyan/20">FLAG&#123;EXACT_FLAG_STRING&#125;</code>
+                    <code className="text-[11px] text-defence-cyan block font-bold bg-defence-sidebar px-2 py-1.5 rounded border border-defence-cyan/20 break-all">FLAG&#123;EXACT_FLAG_STRING&#125;</code>
                   </div>
-                  <div className="bg-defence-bg border border-defence-border p-3.5 rounded-lg space-y-1.5">
+                  <div className="bg-defence-bg border border-defence-border p-3.5 rounded-lg space-y-1.5 min-w-0">
                     <span className="text-[10px] text-defence-amber font-bold block uppercase tracking-wider">2. Secure Coding (Stage 7)</span>
                     <p className="text-[11px] text-defence-text">Paste fixed Python function:</p>
-                    <code className="text-[10px] text-defence-amber block bg-defence-sidebar px-2 py-1 rounded border border-defence-amber/20">def verify_vehicle_command_authorization(user, vehicle_id, action): ...</code>
+                    <code className="text-[10px] text-defence-amber block bg-defence-sidebar px-2 py-1.5 rounded border border-defence-amber/20 break-all leading-relaxed">def verify_vehicle_cmd_auth(user, vehicle_id, action): ...</code>
                   </div>
-                  <div className="bg-defence-bg border border-defence-border p-3.5 rounded-lg space-y-1.5">
+                  <div className="bg-defence-bg border border-defence-border p-3.5 rounded-lg space-y-1.5 min-w-0">
                     <span className="text-[10px] text-defence-purple font-bold block uppercase tracking-wider">3. Incident Report (Stage 8)</span>
                     <p className="text-[11px] text-defence-text">Complete 11 structured fields:</p>
-                    <span className="text-[10px] text-defence-purple block font-bold bg-defence-sidebar px-2 py-1 rounded border border-defence-purple/20">Attacker IP, Vector, Timeline & Mitigations</span>
+                    <span className="text-[10px] text-defence-purple block font-bold bg-defence-sidebar px-2 py-1.5 rounded border border-defence-purple/20 break-words">Attacker IP, Vector, Timeline & Mitigations</span>
                   </div>
                 </div>
               </div>
