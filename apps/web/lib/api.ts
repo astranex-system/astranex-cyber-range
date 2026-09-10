@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://astranex-cyber-range.onrender.com/api').replace(/\/$/, '');
 
 export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -28,7 +28,9 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}${endpoint}`, {
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+
+  const res = await fetch(`${API_BASE}${cleanEndpoint}`, {
     ...options,
     headers,
   });
