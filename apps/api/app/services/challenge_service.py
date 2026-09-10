@@ -3,7 +3,7 @@ from typing import Dict, Any, Tuple
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 
-from app.models import Attempt, Stage, Challenge, Submission, HintUsage, EventLog, IncidentReport, CodeSubmission
+from app.models import Attempt, Stage, Challenge, Submission, HintUsage, EventLog, IncidentReport, CodeSubmission, Assessment
 from app.security import hash_flag
 
 HINT_PENALTY_MAP = {
@@ -12,7 +12,7 @@ HINT_PENALTY_MAP = {
     3: 0.50
 }
 
-def get_candidate_attempt(db: Session, candidate_id: int) -> Attempt:
+def get_candidate_attempt(db: Session, candidate_id: int, auto_create: bool = True) -> Attempt:
     attempt = db.query(Attempt).filter(
         Attempt.candidate_id == candidate_id,
         Attempt.status == "IN_PROGRESS"
@@ -24,10 +24,37 @@ def get_candidate_attempt(db: Session, candidate_id: int) -> Attempt:
             Attempt.candidate_id == candidate_id
         ).order_by(Attempt.started_at.desc()).first()
         
+    if not attempt and auto_create:
+        assessment = db.query(Assessment).filter(Assessment.status == "ACTIVE").first()
+        if assessment:
+            now = datetime.datetime.utcnow()
+            expires = now + datetime.timedelta(minutes=assessment.duration_minutes)
+            attempt = Attempt(
+                candidate_id=candidate_id,
+                assessment_id=assessment.id,
+                started_at=now,
+                expires_at=expires,
+                status="IN_PROGRESS",
+                current_stage_order=0,
+                total_score=0.0
+            )
+            db.add(attempt)
+            db.commit()
+            db.refresh(attempt)
+            
+            # Log event
+            db.add(EventLog(
+                attempt_id=attempt.id,
+                candidate_id=candidate_id,
+                event_type="ATTEMPT_AUTO_INITIALIZED",
+                metadata_json={"started_at": now.isoformat()}
+            ))
+            db.commit()
+
     if not attempt:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No active assessment attempt found. Please start mission briefing."
+            detail="No assessment attempt found. Please contact AstraNex administrator."
         )
         
     # Check server-authoritative timer expiration
