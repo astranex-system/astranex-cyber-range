@@ -1,24 +1,29 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Shield, Lock, Mail, ArrowRight, UserCheck, ShieldAlert } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, UserCheck, ShieldAlert, UserPlus } from 'lucide-react';
 import { fetchApi, setAuthToken } from '../../lib/api';
 
 export default function LoginPage() {
+  const [isRegister, setIsRegister] = useState(false);
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('candidate@astranex.defence');
   const [password, setPassword] = useState('candidate123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetchApi('/auth/login', {
+      const endpoint = isRegister ? '/auth/register' : '/auth/login';
+      const body = isRegister ? { email, password, full_name: fullName } : { email, password };
+
+      const res = await fetchApi(endpoint, {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(body),
       });
 
       setAuthToken(res.access_token);
@@ -35,11 +40,13 @@ export default function LoginPage() {
   };
 
   const fillCandidateSeed = () => {
+    setIsRegister(false);
     setEmail('candidate@astranex.defence');
     setPassword('candidate123');
   };
 
   const fillAdminSeed = () => {
+    setIsRegister(false);
     setEmail('admin@astranex.defence');
     setPassword('admin123');
   };
@@ -62,10 +69,47 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        {/* Tab Switcher */}
+        <div className="flex bg-defence-sidebar p-1 rounded-xl border border-defence-border text-xs font-mono">
+          <button
+            type="button"
+            onClick={() => { setIsRegister(false); setError(null); }}
+            className={`flex-1 py-2 rounded-lg font-bold transition ${!isRegister ? 'bg-defence-card text-defence-cyan border border-defence-cyan/40' : 'text-defence-text hover:text-defence-heading'}`}
+          >
+            CANDIDATE / ADMIN LOGIN
+          </button>
+          <button
+            type="button"
+            onClick={() => { setIsRegister(true); setError(null); }}
+            className={`flex-1 py-2 rounded-lg font-bold transition ${isRegister ? 'bg-defence-card text-defence-cyan border border-defence-cyan/40' : 'text-defence-text hover:text-defence-heading'}`}
+          >
+            NEW CANDIDATE REGISTRATION
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {isRegister && (
+            <div className="space-y-1">
+              <label className="block font-mono text-xs font-semibold text-defence-text">
+                FULL NAME:
+              </label>
+              <div className="relative">
+                <UserCheck className="w-4 h-4 text-defence-text absolute left-3 top-3" />
+                <input
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full bg-defence-sidebar border border-defence-border rounded-lg pl-10 pr-4 py-2.5 font-mono text-xs text-defence-heading focus:outline-none focus:border-defence-cyan"
+                  placeholder="John Doe"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="space-y-1">
             <label className="block font-mono text-xs font-semibold text-defence-text">
-              SERVICE IDENTITY / EMAIL:
+              SERVICE EMAIL / IDENTITY:
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-defence-text absolute left-3 top-3" />
@@ -75,14 +119,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-defence-sidebar border border-defence-border rounded-lg pl-10 pr-4 py-2.5 font-mono text-xs text-defence-heading focus:outline-none focus:border-defence-cyan"
-                placeholder="identity@astranex.defence"
+                placeholder="candidate@astranex.defence"
               />
             </div>
           </div>
 
           <div className="space-y-1">
             <label className="block font-mono text-xs font-semibold text-defence-text">
-              ACCESS TOKEN / PASSWORD:
+              ACCESS PASSWORD:
             </label>
             <div className="relative">
               <Lock className="w-4 h-4 text-defence-text absolute left-3 top-3" />
@@ -109,7 +153,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-defence-cyan hover:bg-defence-cyan/80 text-black font-mono font-bold py-3 rounded-lg text-sm transition flex items-center justify-center space-x-2 shadow-lg disabled:opacity-50"
           >
-            <span>{loading ? 'AUTHENTICATING...' : 'AUTHENTICATE SESSION'}</span>
+            <span>{loading ? 'PROCESSING...' : isRegister ? 'REGISTER & START ASSESSMENT' : 'AUTHENTICATE SESSION'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
