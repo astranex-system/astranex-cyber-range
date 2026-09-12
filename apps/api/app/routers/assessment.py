@@ -17,7 +17,7 @@ from app.schemas import (
 )
 from app.security import get_current_user, check_rate_limit
 from app.services.challenge_service import (
-    get_candidate_attempt, validate_flag_submission, request_challenge_hint
+    get_candidate_attempt, validate_flag_submission, request_challenge_hint, recalculate_attempt_score
 )
 from app.services.sandbox import run_code_in_sandbox
 
@@ -374,17 +374,15 @@ def submit_code_challenge(
         execution_logs=result["output"]
     )
     db.add(cs)
+    db.flush()
 
-    # If candidate passes all 10 tests, unlock Stage 8 and update score
+    # If candidate passes all 10 tests, unlock Stage 8
     if result["passed_all"]:
         if attempt.current_stage_order == 7:
             attempt.current_stage_order = 8
             
-        # Update total attempt score
-        flag_subs = db.query(Submission).filter(Submission.attempt_id == attempt.id, Submission.is_correct == True).all()
-        flag_pts = sum(s.points_awarded for s in flag_subs)
-        rep_pts = attempt.report.score if attempt.report and attempt.report.score else 0.0
-        attempt.total_score = flag_pts + result["score_awarded"] + rep_pts
+    # Always recalculate total score so candidate gets earned code points
+    recalculate_attempt_score(db, attempt)
 
     # Audit event
     db.add(EventLog(
@@ -398,6 +396,7 @@ def submit_code_challenge(
         }
     ))
     db.commit()
+    db.refresh(attempt)
 
     return CodeResultOut(
         tests_passed=result["tests_passed"],
@@ -433,6 +432,8 @@ def submit_incident_report(
     attempt.completed_at = datetime.datetime.utcnow()
     attempt.current_stage_order = 8
 
+    recalculate_attempt_score(db, attempt)
+
     # Audit event
     db.add(EventLog(
         attempt_id=attempt.id,
@@ -442,4 +443,5 @@ def submit_incident_report(
     ))
 
     db.commit()
+    db.refresh(attempt)
     return {"status": "SUCCESS", "message": "Incident Report submitted successfully for AstraNex evaluation."}

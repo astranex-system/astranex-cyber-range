@@ -80,6 +80,36 @@ def calculate_effective_points(max_points: int, hints_used: list[HintUsage]) -> 
     min_factor = min(h.penalty_factor for h in hints_used)
     return round(max_points * min_factor, 1)
 
+def recalculate_attempt_score(db: Session, attempt: Attempt):
+    """
+    Recalculates the total score for an attempt based on:
+    1. Correct flag submissions (taking max points per challenge_id to prevent duplicates)
+    2. Highest score awarded from code submissions (Stage 7)
+    3. Admin/Evaluator report score (Stage 8)
+    """
+    correct_subs = db.query(Submission).filter(
+        Submission.attempt_id == attempt.id,
+        Submission.is_correct == True
+    ).all()
+    
+    challenge_points = {}
+    for s in correct_subs:
+        if s.challenge_id not in challenge_points or s.points_awarded > challenge_points[s.challenge_id]:
+            challenge_points[s.challenge_id] = s.points_awarded
+            
+    flag_pts = sum(challenge_points.values())
+    
+    # Code submission score (Stage 7)
+    code_sub = db.query(CodeSubmission).filter(
+        CodeSubmission.attempt_id == attempt.id
+    ).order_by(CodeSubmission.score_awarded.desc()).first()
+    code_pts = code_sub.score_awarded if code_sub else 0.0
+    
+    # Report score (Stage 8)
+    report_pts = attempt.report.score if (attempt.report and attempt.report.score) else 0.0
+    
+    attempt.total_score = round(flag_pts + code_pts + report_pts, 1)
+
 def validate_flag_submission(
     db: Session,
     attempt: Attempt,
@@ -104,10 +134,20 @@ def validate_flag_submission(
             detail=f"Stage {stage.stage_order} is locked. Complete preceding stages first."
         )
 
+    # Check if this challenge was already solved by candidate
+    existing_correct_sub = db.query(Submission).filter(
+        Submission.attempt_id == attempt.id,
+        Submission.challenge_id == challenge.id,
+        Submission.is_correct == True
+    ).first()
+
+    if existing_correct_sub:
+        return True, existing_correct_sub.points_awarded, attempt.current_stage_order
+
     input_hash = hash_flag(flag_input)
     is_correct = (input_hash == challenge.flag_hash)
 
-    # Count previous submissions
+    # Count previous attempts for this challenge
     prev_count = db.query(Submission).filter(
         Submission.attempt_id == attempt.id,
         Submission.challenge_id == challenge.id
@@ -124,27 +164,10 @@ def validate_flag_submission(
     if is_correct:
         points_awarded = calculate_effective_points(challenge.max_points, hints_used)
         
-        # Update attempt score and stage progression if not already completed
+        # Update stage progression if currently on this stage
         if stage.stage_order == attempt.current_stage_order:
             attempt.current_stage_order = stage.stage_order + 1
             next_stage_order = attempt.current_stage_order
-            
-            # Recalculate total score
-            existing_submissions = db.query(Submission).filter(
-                Submission.attempt_id == attempt.id,
-                Submission.is_correct == True
-            ).all()
-            
-            total = sum(s.points_awarded for s in existing_submissions) + points_awarded
-            # Add code submission score if any
-            code_sub = db.query(CodeSubmission).filter(CodeSubmission.attempt_id == attempt.id).first()
-            if code_sub:
-                total += code_sub.score_awarded
-            # Add report score if reviewed
-            if attempt.report and attempt.report.score:
-                total += attempt.report.score
-                
-            attempt.total_score = total
 
     # Record submission entry
     sub = Submission(
@@ -157,7 +180,11 @@ def validate_flag_submission(
         attempts_count=prev_count + 1
     )
     db.add(sub)
-    
+    db.flush()
+
+    if is_correct:
+        recalculate_attempt_score(db, attempt)
+
     # Audit event
     db.add(EventLog(
         attempt_id=attempt.id,
@@ -172,6 +199,7 @@ def validate_flag_submission(
     ))
     
     db.commit()
+    db.refresh(attempt)
     return is_correct, points_awarded, next_stage_order
 
 def request_challenge_hint(

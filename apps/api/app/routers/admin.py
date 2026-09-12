@@ -13,6 +13,7 @@ from app.schemas import (
     ReportReviewRequest, IncidentReportSchema
 )
 from app.security import get_current_admin
+from app.services.challenge_service import recalculate_attempt_score
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Management & Analytics"])
 
@@ -251,12 +252,7 @@ def score_candidate_report(
     att.report.reviewed_by_id = admin.id
 
     # Recalculate total score
-    flag_subs = db.query(Submission).filter(Submission.attempt_id == att.id, Submission.is_correct == True).all()
-    flag_pts = sum(s.points_awarded for s in flag_subs)
-    code_sub = db.query(CodeSubmission).filter(CodeSubmission.attempt_id == att.id).order_by(CodeSubmission.submitted_at.desc()).first()
-    code_pts = code_sub.score_awarded if code_sub else 0.0
-
-    att.total_score = flag_pts + code_pts + body.score
+    recalculate_attempt_score(db, att)
 
     db.commit()
     return {"status": "SUCCESS", "new_total_score": att.total_score, "report_score": body.score}

@@ -27,7 +27,12 @@ export default function AssessmentPage() {
     try {
       const attData = await fetchApi('/assessment/attempt');
       setAttempt(attData);
-      setActiveStageOrder(attData.current_stage_order);
+      setActiveStageOrder((prevOrder) => {
+        if (prevOrder === 0 || attData.current_stage_order > prevOrder) {
+          return attData.current_stage_order;
+        }
+        return prevOrder;
+      });
 
       const stagesData = await fetchApi('/stages');
       setStages(stagesData);

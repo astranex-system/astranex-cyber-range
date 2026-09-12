@@ -1,5 +1,6 @@
 import sys
 import os
+import uuid
 import pytest
 from fastapi.testclient import TestClient
 
@@ -18,16 +19,10 @@ def test_root():
     assert response.json()["status"] == "ONLINE"
 
 def get_test_candidate_token():
-    email = "test_candidate_unit@astranex.defence"
-    # Try register first
+    email = f"test_cand_{uuid.uuid4().hex[:8]}@astranex.defence"
     res = client.post("/api/auth/register", json={"email": email, "password": "candidate123", "full_name": "Test Candidate"})
-    if res.status_code == 200:
-        return res.json()["access_token"]
-    # Fallback to login
-    res = client.post("/api/auth/login", json={"email": email, "password": "candidate123"})
-    return res.json().get("access_token")
+    return res.json()["access_token"]
 
-import uuid
 
 def test_login_candidate_success():
     email = f"test_cand_{uuid.uuid4().hex[:6]}@astranex.defence"
@@ -84,3 +79,28 @@ def test_flag_submission_and_stage_unlock():
     assert res.status_code == 200
     assert res.json()["is_correct"] is True
     assert res.json()["stage_unlocked"] == 2
+    assert res.json()["total_score"] == 10.0
+
+    # Resubmit correct flag 1 - must be idempotent and not double score
+    res2 = client.post(f"/api/challenges/{ch_id}/submit", headers=headers, json={"challenge_id": ch_id, "flag": "FLAG{ASTRANEX_TELEMETRY_GATEWAY_V241_DISCOVERED}"})
+    assert res2.status_code == 200
+    assert res2.json()["is_correct"] is True
+    assert res2.json()["total_score"] == 10.0
+
+def test_incident_report_submission():
+    token = get_test_candidate_token()
+    headers = {"Authorization": f"Bearer {token}"}
+
+    client.post("/api/assessment/start", headers=headers)
+    res = client.post("/api/report", headers=headers, json={
+        "executive_summary": "Test Executive Summary",
+        "attack_vector": "IDOR in telemetry API",
+        "iocs": "192.168.45.188"
+    })
+    assert res.status_code == 200
+    assert res.json()["status"] == "SUCCESS"
+
+    att_res = client.get("/api/assessment/attempt", headers=headers)
+    assert att_res.status_code == 200
+    assert att_res.json()["status"] == "SUBMITTED"
+    assert att_res.json()["current_stage_order"] == 8
