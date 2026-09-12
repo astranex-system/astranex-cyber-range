@@ -70,6 +70,7 @@ export default function AssessmentPage() {
         candidateName={attempt?.candidate_name}
         currentStageName={`STAGE ${activeStageOrder} - ${currentStageObj?.name}`}
         remainingSeconds={attempt?.remaining_seconds || 0}
+        expiresAt={attempt?.expires_at}
         totalScore={attempt?.total_score || 0}
         attemptStatus={attempt?.status}
       />

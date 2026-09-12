@@ -1,6 +1,4 @@
-'use client';
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Radio, Clock, UserCheck, LogOut, Award } from 'lucide-react';
 import { removeAuthToken } from '../lib/api';
 
@@ -8,21 +6,58 @@ interface HUDHeaderProps {
   candidateName?: string;
   currentStageName?: string;
   remainingSeconds?: number;
+  expiresAt?: string;
   totalScore?: number;
   attemptStatus?: string;
 }
 
 export const HUDHeader: React.FC<HUDHeaderProps> = ({
-  candidateName = 'John Doe',
+  candidateName = 'Operative',
   currentStageName = 'STAGE 0 - BRIEFING',
   remainingSeconds = 5400,
+  expiresAt,
   totalScore = 0,
   attemptStatus = 'IN_PROGRESS'
 }) => {
+  const [secondsLeft, setSecondsLeft] = useState<number>(remainingSeconds);
+
+  // Sync state when props change
+  useEffect(() => {
+    if (expiresAt) {
+      const targetTime = new Date(expiresAt).getTime();
+      const now = Date.now();
+      const diff = Math.max(0, Math.floor((targetTime - now) / 1000));
+      setSecondsLeft(diff);
+    } else {
+      setSecondsLeft(remainingSeconds);
+    }
+  }, [remainingSeconds, expiresAt]);
+
+  // Continuous real-time 1-second interval ticker
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (expiresAt) {
+        const targetTime = new Date(expiresAt).getTime();
+        const now = Date.now();
+        const diff = Math.max(0, Math.floor((targetTime - now) / 1000));
+        setSecondsLeft(diff);
+      } else {
+        setSecondsLeft((prev) => Math.max(0, prev - 1));
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [expiresAt]);
+
   const formatTime = (secs: number) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    const hours = Math.floor(secs / 3600);
+    const minutes = Math.floor((secs % 3600) / 60);
+    const seconds = secs % 60;
+
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const handleLogout = () => {
@@ -80,7 +115,7 @@ export const HUDHeader: React.FC<HUDHeaderProps> = ({
           <Clock className="w-4 h-4 text-defence-cyan" />
           <span className="text-xs font-mono text-defence-text hidden sm:inline">ELAPSED:</span>
           <span className="font-mono text-xs font-bold text-defence-cyan">
-            {formatTime(remainingSeconds)}
+            {formatTime(secondsLeft)}
           </span>
         </div>
 
